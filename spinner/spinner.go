@@ -67,7 +67,7 @@ func (s *Spinner) IsActive() bool {
 
 func (s *Spinner) getFrame() string {
     s.frames = s.frames.Next()
-    return s.frames.Next().Value.(string)
+    return s.frames.Value.(string) + "\x1b[1D"
 }
 
 // Start will start the indicator
