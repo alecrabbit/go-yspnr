@@ -76,7 +76,7 @@ func (s *Spinner) IsActive() bool {
 
 func (s *Spinner) getFrame() string {
     s.frames = s.frames.Next()
-    return s.frames.Value.(string) + " " + s.currentMSG /*+ "\x1b[1D"*/
+    return s.frames.Value.(string) + " " + s.currentMSG
 }
 
 // Start will start the indicator
@@ -103,6 +103,7 @@ func (s *Spinner) Start() {
                 s.lock.Lock()
                 s.lastOutput = s.getFrame()
                 s.lastOutput += fmt.Sprintf("\x1b[%vD", runewidth.StringWidth(s.lastOutput))
+                // s.lastOutput = strings.ReplaceAll(s.lastOutput, "\x1b", `\e`) + "\n"
                 _, _ = fmt.Fprintf(s.Writer, s.lastOutput)
                 s.lock.Unlock()
             }

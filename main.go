@@ -4,10 +4,18 @@ import (
     "fmt"
     "time"
 
+    "github.com/mattn/go-runewidth"
+
     "github.com/alecrabbit/go-yspnr/spinner"
 )
 
 func main() {
+    i := spinner.Arrows03
+
+    for a, _ := range spinner.CharSets {
+        printCharSet(a)
+        fmt.Println()
+    }
     messages := []string{
         "Initializing",
         "Starting",
@@ -20,17 +28,17 @@ func main() {
         "Processing",
     }
     fmt.Println("Open > ")
-    s := spinner.New(1, 120*time.Millisecond)
+    s := spinner.New(i, 500*time.Millisecond)
     s.FinalMSG = "Done!\n"
+    s.HideCursor = false
     s.Start()
     for _, m := range messages {
     	s.Erase()
     	fmt.Println(m)
     	fmt.Print(".......")
     	s.Last()
-    	s.Message(time.Now().Format("2006-01-02 15:04:05"))
-    	// fmt.Println(time.Now().Format("2006-01-02 15:04:05"))
-	    time.Sleep(1 * time.Second)
+    	s.Message(time.Now().Format("15:04:05"))
+	    time.Sleep(5 * time.Second)
     }
 	time.Sleep(1 * time.Second)
 	s.Stop()
@@ -38,22 +46,12 @@ func main() {
 
 }
 
-// 	fmt.Print("      .")
-//	frame := "🕐"
-//	message := " BOLD "
-//	w := runewidth.StringWidth(frame + message)
-//	fmt.Printf("%v\x1b[1m%v\x1b[0m\x1b[%vD", frame, message, w)
-//
-//	// time.Sleep(3 * time.Second)
-//	fmt.Println()
-//	fmt.Println(w)
-//
-//	fmt.Println(spinner.NoColor, spinner.Color, spinner.Color256, spinner.Truecolor)
-//
-//
-//	time.Sleep(3 * time.Second)
-//	ticker.Stop()
-//	fmt.Println("Ticker stopped")
-//	time.Sleep(2 * time.Second)
-//
-//	done <- true
+func printCharSet(n int) {
+        var widths []int
+        for _, c := range spinner.CharSets[n] {
+            width := runewidth.StringWidth(c)
+            widths = append(widths, width)
+            fmt.Printf("%s %v \n", c, width)
+        }
+        fmt.Println()
+}
