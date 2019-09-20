@@ -20,7 +20,7 @@ type ColorLevel int
 
 const (
     NoColor            = iota
-    Color   ColorLevel = 1 << (2 * 2 * iota)
+    Color   ColorLevel = 1 << (4 * iota)
     Color256
     Truecolor
 )
@@ -39,7 +39,7 @@ type Spinner struct {
     stop       chan bool     // stopChan is a channel used to stop the indicator
     HideCursor bool          // hideCursor determines if the cursor is visible
     r          *regexp.Regexp
-    // lastOutput string                        // last character(set) written
+    lastOutput string // last character(set) written
     // color      func(a ...interface{}) string // default color is white
     // enabled  bool          // active holds the state of the spinner
     // Prefix     string                        // Prefix is the text preppended to the indicator
@@ -56,8 +56,8 @@ func New(t int, d time.Duration) *Spinner {
         lock:       &sync.RWMutex{},
         Writer:     os.Stderr,
         colorLevel: Color256,
-        FinalMSG:   "Done!\n",
-        currentMSG: "Message",
+        FinalMSG:   "",
+        currentMSG: "",
         stop:       make(chan bool),
         HideCursor: true,
         r:          regexp.MustCompile(`\x1b[[][^A-Za-z]*[A-Za-z]`),
@@ -100,11 +100,11 @@ func (s *Spinner) Start() {
             case <-s.stop:
                 return
             case <-ticker.C:
-                frame := s.getFrame()
-                // frame += fmt.Sprintf("\x1b[%dD", len(frame))
-                frame += fmt.Sprintf("\x1b[%vD", runewidth.StringWidth(frame))
-                // _, _ = fmt.Fprintf(s.Writer, strings.ReplaceAll(frame, "\x1b", `\x1b`))
-                _, _ = fmt.Fprintf(s.Writer, frame)
+                s.lock.Lock()
+                s.lastOutput = s.getFrame()
+                s.lastOutput += fmt.Sprintf("\x1b[%vD", runewidth.StringWidth(s.lastOutput))
+                _, _ = fmt.Fprintf(s.Writer, s.lastOutput)
+                s.lock.Unlock()
             }
         }
     }()
@@ -115,6 +115,7 @@ func (s *Spinner) Stop() {
     s.lock.Lock()
     defer s.lock.Unlock()
     if s.active {
+        s.erase()
         s.active = false
         if s.HideCursor {
             // show the cursor
@@ -130,4 +131,29 @@ func (s *Spinner) Stop() {
 
 func (s *Spinner) strip(in string) string {
     return s.r.ReplaceAllString(in, "")
+}
+
+func (s *Spinner) Erase() {
+    s.lock.Lock()
+    s.erase()
+    s.lock.Unlock()
+}
+
+func (s *Spinner) erase() {
+    // Note: external lock is needed
+    if s.active {
+        _, _ = fmt.Fprintf(s.Writer, fmt.Sprintf("\x1b[%vX", runewidth.StringWidth(s.strip(s.lastOutput))))
+    }
+}
+
+func (s *Spinner) Last() {
+    s.lock.Lock()
+    _, _ = fmt.Fprintf(s.Writer, s.lastOutput)
+    s.lock.Unlock()
+}
+
+func (s *Spinner) Message(m string) {
+    s.lock.Lock()
+    s.currentMSG = m
+    s.lock.Unlock()
 }

@@ -1,20 +1,41 @@
 package main
 
 import (
-	"fmt"
-	"time"
+    "fmt"
+    "time"
 
-	"github.com/alecrabbit/go-yspnr/spinner"
+    "github.com/alecrabbit/go-yspnr/spinner"
 )
 
 func main() {
-	fmt.Println("Started")
-	s := spinner.New(1, 120*time.Millisecond)
-	fmt.Print("   .")
-	s.Start()
-	time.Sleep(4*time.Second)
+    messages := []string{
+        "Initializing",
+        "Starting",
+        "Long message: this message continues further",
+        "Gathering data",
+        "Short",
+        "Short",
+        "Processing",
+        "Process",
+        "Processing",
+    }
+    fmt.Println("Open > ")
+    s := spinner.New(1, 120*time.Millisecond)
+    s.FinalMSG = "Done!\n"
+    s.Start()
+    for _, m := range messages {
+    	s.Erase()
+    	fmt.Println(m)
+    	fmt.Print(".......")
+    	s.Last()
+    	s.Message(time.Now().Format("2006-01-02 15:04:05"))
+    	// fmt.Println(time.Now().Format("2006-01-02 15:04:05"))
+	    time.Sleep(1 * time.Second)
+    }
+	time.Sleep(1 * time.Second)
 	s.Stop()
-	fmt.Println("Finished")
+    fmt.Println("Finished")
+
 }
 
 // 	fmt.Print("      .")
