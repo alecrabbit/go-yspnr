@@ -14,7 +14,7 @@ const (
 // Declare spinner types
 const (
     BlockVertical int = iota
-    Arrows
+    // Arrows
     BouncingBlock
     BouncingBlock2
     RotatingCircle
@@ -45,7 +45,7 @@ var CharSets = map[int][]string{
     // ↘ 2
     // ↓ 1
     // ↙ 2
-    Arrows: {"←", "↖", "↑", "↗", "→", "↘", "↓", "↙"}, // Ambiguous width
+    // Arrows: {"←", "↖", "↑", "↗", "→", "↘", "↓", "↙"}, // Ambiguous width
 
     BlockVertical:  {"▁", "▃", "▄", "▅", "▆", "▇", "█", "▇", "▆", "▅", "▄", "▃", "▁"},
     BouncingBlock:  {"▖", "▘", "▝", "▗"},

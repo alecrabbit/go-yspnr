@@ -5,17 +5,23 @@ import (
     "time"
 
     "github.com/mattn/go-runewidth"
+    "github.com/rivo/uniseg"
 
     "github.com/alecrabbit/go-yspnr/spinner"
 )
 
 func main() {
     i := spinner.Arrows03
-
-    for a, _ := range spinner.CharSets {
-        printCharSet(a)
-        fmt.Println()
-    }
+    fmt.Println()
+    fmt.Println()
+    printCharSet([]string{"👪", "뢴", "🇩🇪", "ö", "🏳️‍🌈",})
+    printCharSet([]string{"🏳️‍🌈", "🇨🇴", "🇧🇼"})
+    printCharSet([]string{"←", "↖", "↑", "↗", "→", "↘", "↓", "↙"})
+    printCharSet([]string{"■", "□", "▪", "▫"})
+    // for a, _ := range spinner.CharSets {
+    //     printCharSet(spinner.CharSets[a])
+    //     fmt.Println()
+    // }
     messages := []string{
         "Initializing",
         "Starting",
@@ -46,12 +52,16 @@ func main() {
 
 }
 
-func printCharSet(n int) {
-        var widths []int
-        for _, c := range spinner.CharSets[n] {
+func printCharSet(aw []string) {
+        for _, c := range aw {
             width := runewidth.StringWidth(c)
-            widths = append(widths, width)
-            fmt.Printf("%s %v \n", c, width)
+
+            fmt.Printf("%s %v ", c, width)
+            gr := uniseg.NewGraphemes(c)
+            for gr.Next() {
+                fmt.Printf("%x ", gr.Runes())
+            }
+            fmt.Println()
         }
         fmt.Println()
 }
