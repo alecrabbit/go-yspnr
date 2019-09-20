@@ -11,13 +11,15 @@ import (
 )
 
 func main() {
-    i := spinner.Arrows03
+    i := spinner.Snake3
     fmt.Println()
     fmt.Println()
+    printCharSet([]string{"←", "↖", "↑", "↗", "→", "↘", "↓", "↙",})
+    printCharSet([]string{"■", "□", "▪", "▫"})
+    fmt.Println()
+
     printCharSet([]string{"👪", "뢴", "🇩🇪", "ö", "🏳️‍🌈",})
     printCharSet([]string{"🏳️‍🌈", "🇨🇴", "🇧🇼"})
-    printCharSet([]string{"←", "↖", "↑", "↗", "→", "↘", "↓", "↙"})
-    printCharSet([]string{"■", "□", "▪", "▫"})
     // for a, _ := range spinner.CharSets {
     //     printCharSet(spinner.CharSets[a])
     //     fmt.Println()
@@ -34,9 +36,9 @@ func main() {
         "Processing",
     }
     fmt.Println("Open > ")
-    s := spinner.New(i, 500*time.Millisecond)
+    s := spinner.New(i, 100*time.Millisecond)
     s.FinalMSG = "Done!\n"
-    s.HideCursor = false
+    // s.HideCursor = false
     s.Start()
     for _, m := range messages {
     	s.Erase()
