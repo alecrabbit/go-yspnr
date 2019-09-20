@@ -5,8 +5,11 @@ import (
     "fmt"
     "io"
     "os"
+    "regexp"
     "sync"
     "time"
+
+    "github.com/mattn/go-runewidth"
 )
 
 func init() {
@@ -25,14 +28,17 @@ const (
 // Spinner struct to hold the provided options
 type Spinner struct {
     Interval   time.Duration // Delay is the speed of the indicator
-    frames     *ring.Ring      // chars holds the chosen character set
+    frames     *ring.Ring    // chars holds the chosen character set
     active     bool          // active holds the state of the spinner
     FinalMSG   string        // string displayed after Stop() is called
+    currentMSG string        // string displayed after Stop() is called
+    progress   float32       // string displayed after Stop() is called
     colorLevel ColorLevel
     lock       *sync.RWMutex //
     Writer     io.Writer     // to make testing better, exported so users have access
     stop       chan bool     // stopChan is a channel used to stop the indicator
     HideCursor bool          // hideCursor determines if the cursor is visible
+    r          *regexp.Regexp
     // lastOutput string                        // last character(set) written
     // color      func(a ...interface{}) string // default color is white
     // enabled  bool          // active holds the state of the spinner
@@ -51,8 +57,10 @@ func New(t int, d time.Duration) *Spinner {
         Writer:     os.Stderr,
         colorLevel: Color256,
         FinalMSG:   "Done!\n",
+        currentMSG: "Message",
         stop:       make(chan bool),
         HideCursor: true,
+        r:          regexp.MustCompile(`\x1b[[][^A-Za-z]*[A-Za-z]`),
     }
     for i := 0; i < k; i++ {
         s.frames.Value = strings[i]
@@ -68,7 +76,7 @@ func (s *Spinner) IsActive() bool {
 
 func (s *Spinner) getFrame() string {
     s.frames = s.frames.Next()
-    return s.frames.Value.(string) + "\x1b[1D"
+    return s.frames.Value.(string) + " " + s.currentMSG /*+ "\x1b[1D"*/
 }
 
 // Start will start the indicator
@@ -92,7 +100,11 @@ func (s *Spinner) Start() {
             case <-s.stop:
                 return
             case <-ticker.C:
-                _, _ = fmt.Fprintf(s.Writer, s.getFrame())
+                frame := s.getFrame()
+                // frame += fmt.Sprintf("\x1b[%dD", len(frame))
+                frame += fmt.Sprintf("\x1b[%vD", runewidth.StringWidth(frame))
+                // _, _ = fmt.Fprintf(s.Writer, strings.ReplaceAll(frame, "\x1b", `\x1b`))
+                _, _ = fmt.Fprintf(s.Writer, frame)
             }
         }
     }()
@@ -114,4 +126,8 @@ func (s *Spinner) Stop() {
         }
         s.stop <- true
     }
+}
+
+func (s *Spinner) strip(in string) string {
+    return s.r.ReplaceAllString(in, "")
 }

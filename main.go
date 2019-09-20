@@ -10,6 +10,7 @@ import (
 func main() {
 	fmt.Println("Started")
 	s := spinner.New(1, 120*time.Millisecond)
+	fmt.Print("   .")
 	s.Start()
 	time.Sleep(4*time.Second)
 	s.Stop()
