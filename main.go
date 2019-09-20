@@ -4,10 +4,9 @@ import (
     "fmt"
     "time"
 
+    "github.com/alecrabbit/go-cli-spinner"
     "github.com/mattn/go-runewidth"
     "github.com/rivo/uniseg"
-
-    "github.com/alecrabbit/go-yspnr/spinner"
 )
 
 func main() {
