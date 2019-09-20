@@ -11,7 +11,6 @@ func main() {
 	fmt.Println("Started")
 	s := spinner.New(1, 120*time.Millisecond)
 	s.Start()
-	s.Start()
 	time.Sleep(4*time.Second)
 	s.Stop()
 	fmt.Println("Finished")

@@ -52,6 +52,7 @@ func New(t int, d time.Duration) *Spinner {
         colorLevel: Color256,
         FinalMSG:   "Done!\n",
         stop:       make(chan bool),
+        HideCursor: true,
     }
     for i := 0; i < k; i++ {
         s.frames.Value = strings[i]
@@ -77,6 +78,11 @@ func (s *Spinner) Start() {
         s.lock.Unlock()
         return
     }
+    if s.HideCursor {
+        // hide the cursor
+        _, _ = fmt.Fprintf(s.Writer, "\033[?25l")
+    }
+
     s.active = true
     s.lock.Unlock()
     ticker := time.NewTicker(s.Interval)
@@ -98,6 +104,11 @@ func (s *Spinner) Stop() {
     defer s.lock.Unlock()
     if s.active {
         s.active = false
+        if s.HideCursor {
+            // show the cursor
+            _, _ = fmt.Fprintf(s.Writer, "\033[?25h")
+        }
+
         if s.FinalMSG != "" {
             _, _ = fmt.Fprintf(s.Writer, s.FinalMSG)
         }
