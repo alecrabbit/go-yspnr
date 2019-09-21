@@ -39,12 +39,16 @@ func main() {
     s.FinalMSG = "Done!\n"
     // s.HideCursor = false
     s.Start()
-    for _, m := range messages {
+    l := len(messages)
+    for i, m := range messages {
     	s.Erase()
     	fmt.Println(m)
     	fmt.Print(".......")
     	s.Last()
     	s.Message(time.Now().Format("15:04:05"))
+        f := float32(i) / float32(l)
+        // fmt.Printf("%4.0f%%\n", f)
+    	s.Progress(f)
 	    time.Sleep(5 * time.Second)
     }
 	time.Sleep(1 * time.Second)
