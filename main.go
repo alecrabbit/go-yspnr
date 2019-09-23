@@ -2,6 +2,7 @@ package main
 
 import (
     "fmt"
+    "math/rand"
     "time"
 
     "github.com/alecrabbit/go-cli-spinner"
@@ -29,10 +30,15 @@ func main() {
     s := spinner.New(spinner.Snake3, 100*time.Millisecond)
     s.FinalMessage = "Done!\n"
     // s.HideCursor = false
+    s.HideCursor = false
+    // s.Reversed = true
 
+    rand.Seed(time.Now().UnixNano())
     s.Start()
     l := len(messages)
     for i, m := range messages {
+        // Doing some work 1
+        time.Sleep(500 * time.Millisecond)
         // Printing execution message
         {
             s.Erase()
@@ -40,14 +46,17 @@ func main() {
             s.Last()
         }
         // Simulating spinner message
-        s.Message(fmt.Sprintf("Message at %s", time.Now().Format("15:04:05")))
+        if rand.Intn(16) > 12 {
+            s.Message("") // Sometimes there are no messages
+        } else {
+            s.Message(fmt.Sprintf("Message at %s", time.Now().Format("15:04:05")))
+        }
+        // Doing some work 2
+        time.Sleep(500 * time.Millisecond)
         // Simulating spinner progress
         f := float32(i) / float32(l)
         s.Progress(f)
-        // Doing some work
-        time.Sleep(1 * time.Second)
     }
     time.Sleep(3 * time.Second)
     s.Stop()
-    // fmt.Println("Finished")
 }
