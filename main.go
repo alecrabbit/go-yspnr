@@ -1,7 +1,6 @@
 package main
 
 import (
-    "flag"
     "fmt"
     "math/rand"
     "time"
@@ -18,8 +17,8 @@ func init() {
 }
 
 func main() {
-    flag.Parse()
-    defer profile.Start(profile.CPUProfile, profile.MemProfile, profile.TraceProfile, profile.ProfilePath(".")).Stop()
+    // profile.CPUProfile, profile.MemProfile, profile.TraceProfile
+    defer profile.Start(profile.TraceProfile, profile.ProfilePath("./profile")).Stop()
 
     messages := []string{
         "Starting",
