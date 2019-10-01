@@ -18,7 +18,7 @@ func init() {
 
 func main() {
     // profile.CPUProfile, profile.MemProfile, profile.TraceProfile
-    defer profile.Start(profile.TraceProfile, profile.ProfilePath("./profile")).Stop()
+    defer profile.Start(profile.TraceProfile, profile.ProfilePath("./pprof")).Stop()
 
     messages := []string{
         "Starting",
