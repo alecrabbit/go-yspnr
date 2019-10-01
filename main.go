@@ -3,14 +3,11 @@ package main
 import (
     "flag"
     "fmt"
-    "log"
     "math/rand"
-    "os"
-    "runtime"
-    "runtime/pprof"
     "time"
 
     "github.com/davecgh/go-spew/spew"
+    "github.com/pkg/profile"
 
     "github.com/alecrabbit/go-cli-spinner"
     "github.com/alecrabbit/go-cli-spinner/color"
@@ -20,25 +17,9 @@ func init() {
     rand.Seed(time.Now().UnixNano())
 }
 
-var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to `file`")
-var memprofile = flag.String("memprofile", "", "write memory profile to `file`")
-
 func main() {
     flag.Parse()
-    if *cpuprofile != "" {
-        runtime.SetCPUProfileRate(100000) // Needed here this app is too fast
-        fmt.Println("SetCPUProfileRate set")
-        f, err := os.Create(*cpuprofile)
-        if err != nil {
-            log.Fatal("could not create CPU profile: ", err)
-        }
-        defer f.Close()
-        if err := pprof.StartCPUProfile(f); err != nil {
-            log.Fatal("could not start CPU profile: ", err)
-        }
-        defer fmt.Println("CPU profiling: stop")
-        defer pprof.StopCPUProfile()
-    }
+    defer profile.Start(profile.CPUProfile, profile.MemProfile, profile.TraceProfile, profile.ProfilePath(".")).Stop()
 
     messages := []string{
         "Starting",
@@ -105,18 +86,6 @@ func main() {
     s.Stop()
     time.Sleep(1 * time.Second)
 
-    if *memprofile != "" {
-        f, err := os.Create(*memprofile)
-        if err != nil {
-            log.Fatal("could not create memory profile: ", err)
-        }
-        defer f.Close()
-        runtime.GC() // get up-to-date statistics
-        if err := pprof.WriteHeapProfile(f); err != nil {
-            log.Fatal("could not write memory profile: ", err)
-        }
-        defer fmt.Println("Memory profiling: stop")
-    }
 }
 
 func duration() time.Duration {
