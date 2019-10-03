@@ -1,6 +1,6 @@
 /.eval/
 /.idea/
 /out.txt
-*.prof
+/profiling/
 
-*.out
+pprof/
