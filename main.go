@@ -4,9 +4,10 @@ import (
     "fmt"
     "math/rand"
     "time"
+    "log"
 
     "github.com/davecgh/go-spew/spew"
-    "github.com/pkg/profile"
+    // "github.com/pkg/profile"
 
     "github.com/alecrabbit/go-cli-spinner"
     "github.com/alecrabbit/go-cli-spinner/color"
@@ -17,8 +18,10 @@ func init() {
 }
 
 func main() {
-    // profile.CPUProfile, profile.MemProfile, profile.TraceProfile
-    defer profile.Start(profile.TraceProfile, profile.ProfilePath("./pprof")).Stop()
+    // profile.CPUProfile, profile.MemProfile, profile.TraceProfile, profile.MutexProfile
+    // defer profile.Start(profile.TraceProfile, profile.ProfilePath("./profiling")).Stop()
+    // defer profile.Start(profile.CPUProfile, profile.ProfilePath("./profiling")).Stop()
+    // defer profile.Start(profile.MemProfile, profile.MemProfileRate(1), profile.ProfilePath("./profiling")).Stop()
 
     messages := []string{
         "Starting",
@@ -38,15 +41,19 @@ func main() {
         "Be patient",
     }
 
-    s, _ := spinner.New(
+    s, err := spinner.New(
         spinner.Interval(100),
         // spinner.ColorLevel(color.TNoColor),
         spinner.ColorLevel(color.TColor256),
         spinner.ProgressFormat("[%4s]"), // [  7%]
-        // spinner.MessageFormat("%s "), // (message)
+        spinner.MessageFormat("(%s)"),   // (message)
+        spinner.Format("<%s >"),         // (message)
     )
+    if err != nil {
+        log.Fatal(err)
+    }
     s.FinalMessage = "Done!\n"
-    // s.HideCursor = false
+    s.HideCursor = true
     s.Reversed = true
     s.Prefix = " " // spinner prefix
 
@@ -54,7 +61,7 @@ func main() {
     spew.Dump(nil)
     fmt.Println()
 
-    fmt.Print(".........")
+    fmt.Print("..................................")
     // Start spinner
     s.Start()
     // for _, m := range messages {
@@ -78,7 +85,12 @@ func main() {
         // Doing some work 2
         time.Sleep(duration())
         // Simulating spinner progress
-        s.Progress(float32(i) / float32(l)) // float32 0..1
+        f := float32(i) / float32(l)
+        if f > 0.5 && f < 0.7 {
+            s.Progress(0)
+        } else {
+            s.Progress(f) // float32 0..1
+        }
     }
     time.Sleep(1 * time.Second)
     // Stop spinner
