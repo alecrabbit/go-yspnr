@@ -24,18 +24,18 @@ func main() {
     // defer profile.Start(profile.MemProfile, profile.MemProfileRate(1), profile.ProfilePath("./profiling")).Stop()
 
     messages := map[int]string{
-        0:   "Starting",
-        3:   "Initializing",
-        6:   "Gathering data",
+        0:  "Starting",
+        3:  "Initializing",
+        6:  "Gathering data",
         9:  "Processing",
-        16:  "Processing",
-        25:  "Processing",
-        44:  "Processing",
-        60:  "Processing",
-        79:  "Processing",
-        82:  "Still processing",
-        90:  "Be patient",
-        95:  "Almost there",
+        16: "Processing",
+        25: "Processing",
+        44: "Processing",
+        60: "Processing",
+        79: "Processing",
+        82: "Still processing",
+        90: "Be patient",
+        95: "Almost there",
     }
 
     s, err := spinner.New(
