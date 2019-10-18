@@ -1,6 +1,5 @@
 /.eval/
 /.idea/
-/out.txt
+/.deprecated/
 /profiling/
 
-pprof/
