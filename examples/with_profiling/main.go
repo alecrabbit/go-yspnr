@@ -6,11 +6,9 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/davecgh/go-spew/spew"
-
-	// "github.com/pkg/profile"
-
 	"github.com/alecrabbit/go-cli-spinner"
+	"github.com/davecgh/go-spew/spew"
+	"github.com/pkg/profile"
 )
 
 const dots = "...................."
@@ -23,7 +21,7 @@ func main() {
 	// profile.CPUProfile, profile.MemProfile, profile.TraceProfile, profile.MutexProfile
 	// defer profile.Start(profile.TraceProfile, profile.ProfilePath("./profiling")).Stop()
 	// defer profile.Start(profile.CPUProfile, profile.ProfilePath("./profiling")).Stop()
-	// defer profile.Start(profile.MemProfile, profile.MemProfileRate(1), profile.ProfilePath("./profiling")).Stop()
+	defer profile.Start(profile.MemProfile, profile.MemProfileRate(1), profile.ProfilePath("./profiling")).Stop()
 
 	messages := map[int]string{
 		0:  "Starting",
